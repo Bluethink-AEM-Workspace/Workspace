@@ -57,7 +57,7 @@
             
     <aem.host>localhost</aem.host>
             
-    <aem.port>4506</aem.port>
+    <aem.port>4502</aem.port>
             
     <aem.publish.host>localhost</aem.publish.host>
             
