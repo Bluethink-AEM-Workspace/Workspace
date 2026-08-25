@@ -34,7 +34,7 @@ let reports_path = process.env.REPORTS_PATH || './reports/';
 let shared_folder = process.env.SHARED_FOLDER || null;
 let upload_url = process.env.UPLOAD_URL || null;
 // AEM Author
-let aem_author_basel_url = process.env.AEM_AUTHOR_URL || 'http://localhost:4506';
+let aem_author_basel_url = process.env.AEM_AUTHOR_URL || 'http://localhost:4502';
 let aem_author_username  = process.env.AEM_AUTHOR_USERNAME || 'admin';
 let aem_author_password  = process.env.AEM_AUTHOR_PASSWORD || 'admin';
 // AEM Publish
