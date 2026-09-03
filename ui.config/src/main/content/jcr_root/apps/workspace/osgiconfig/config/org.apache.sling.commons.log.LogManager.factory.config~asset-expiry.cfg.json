@@ -1,0 +1,13 @@
+{
+  "org.apache.sling.commons.log.names": [
+    "com.workspace.core.schedulers",
+    "com.workspace.core.services.AssetExpiryNotificationService",
+    "com.workspace.core.services.ExpiryNotificationAuditService",
+    "com.workspace.core.services.AssetExpiryQueryService"
+  ],
+  "org.apache.sling.commons.log.level": "INFO",
+  "org.apache.sling.commons.log.file": "logs/asset-expiry.log",
+  "org.apache.sling.commons.log.file.number": 5,
+  "org.apache.sling.commons.log.file.size": "10MB",
+  "org.apache.sling.commons.log.additiv": false
+}
