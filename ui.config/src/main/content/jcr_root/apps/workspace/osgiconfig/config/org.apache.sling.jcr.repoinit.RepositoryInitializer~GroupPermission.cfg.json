@@ -1,0 +1,26 @@
+{
+  "scripts": [
+    "# 1. Groups Creation",
+    "create group dam-workspace-admin",
+    "create group dam-workspace-contributors",
+
+    "# 2. Admin User Permissions (Full Access)",
+    "set ACL on /content/dam\n allow jcr:all for dam-workspace-admin\n end",
+
+    "# 3. Contributor Root Navigation (Folder read, block direct assets)",
+    "set ACL on /content/dam\n allow jcr:read for dam-workspace-contributors\n deny jcr:read for dam-workspace-contributors restriction(rep:glob,/*)\n end",
+
+    "# 4. Contributor Workspace Folder Navigation (Folder read, block direct assets)",
+    "set ACL on /content/dam/workspace\n allow jcr:read for dam-workspace-contributors\n deny jcr:read for dam-workspace-contributors restriction(rep:glob,/*)\n end",
+
+    "# 5. Contributor Target Folder CRUD Operations",
+    "set ACL on /content/dam/workspace/uploads\n allow jcr:read,jcr:addChildNodes,jcr:modifyProperties,jcr:removeChildNodes,jcr:removeNode for dam-workspace-contributors\n end",
+
+    "# 6. Custom Metadata Schemas & UI Consoles Access",
+    "set ACL on /conf\n allow jcr:read for dam-workspace-contributors\n end",
+    "set ACL on /apps\n allow jcr:read for dam-workspace-contributors\n end",
+    "set ACL on /libs\n allow jcr:read for dam-workspace-contributors\n end",
+    "set ACL on /etc\n allow jcr:read for dam-workspace-contributors\n end",
+    "set ACL on /var\n allow jcr:read,jcr:modifyProperties,jcr:addChildNodes for dam-workspace-contributors\n end"
+  ]
+}

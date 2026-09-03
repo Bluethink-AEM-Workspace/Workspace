@@ -1,7 +1,0 @@
-{
-    "scripts": [
-        "create path (sling:OrderedFolder) /content/dam/workspace",
-        "create path (nt:unstructured) /content/dam/workspace/jcr:content",
-        "set properties on /content/dam/workspace/jcr:content\n  set cq:conf{String} to /conf/workspace\n  set jcr:title{String} to \"Workspace\"\nend"
-    ]
-}
