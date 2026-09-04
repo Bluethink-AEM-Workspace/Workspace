@@ -1,88 +1,58 @@
+
+
 package com.workspace.core.services.impl;
 
-import com.workspace.core.services.DamAdminRecipientService;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.Designate;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component(
-        service = DamAdminRecipientService.class
-)
-@Designate(
-        ocd = DamAdminRecipientServiceImpl.Config.class
-)
+import com.workspace.core.services.DamAdminRecipientService;
+
+@Component(service = DamAdminRecipientService.class)
+@Designate(ocd = DamAdminRecipientServiceImpl.Config.class)
 public class DamAdminRecipientServiceImpl
         implements DamAdminRecipientService {
 
     private static final Logger LOG =
             LoggerFactory.getLogger(
-                    DamAdminRecipientServiceImpl.class
-            );
+                    DamAdminRecipientServiceImpl.class);
 
-    private volatile List<String> recipients =
-            Collections.emptyList();
+    private String adminEmail;
 
     @ObjectClassDefinition(
-            name = "Workspace DAM Admin Recipients"
+            name = "DAM Admin Recipient Configuration"
     )
     public @interface Config {
 
-        @AttributeDefinition(
-                name = "DAM Admin Email Addresses",
-                description =
-                        "Email addresses that receive DAM deactivation notifications"
-        )
-        String[] recipients() default {};
+        @AttributeDefinition(name = "Admin Email")
+        String adminEmail();
     }
 
     @Activate
-    @Modified
     protected void activate(Config config) {
 
-        List<String> configured =
-                new ArrayList<>();
+        adminEmail = config.adminEmail();
 
-        for (String email : config.recipients()) {
-
-            if (email != null
-                    && !email.trim().isEmpty()) {
-
-                configured.add(
-                        email.trim()
-                );
-            }
-        }
-
-        recipients =
-                Collections.unmodifiableList(
-                        configured
-                );
-
-        LOG.info(
-                "DAM Admin recipients configured. count=[{}]",
-                recipients.size()
-        );
+        LOG.info("DAM admin email configured: {}", adminEmail);
     }
 
     @Override
     public List<String> getRecipients() {
 
-        LOG.debug(
-                "Returning DAM Admin recipients. count=[{}]",
-                recipients.size()
-        );
+        LOG.info("Getting DAM admin recipient");
 
-        return recipients;
+        if (adminEmail == null || adminEmail.trim().isEmpty()) {
+            LOG.error("DAM admin email is not configured");
+            return Collections.emptyList();
+        }
+
+        return Collections.singletonList(adminEmail.trim());
     }
-}
+}   

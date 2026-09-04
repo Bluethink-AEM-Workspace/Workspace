@@ -1,43 +1,33 @@
-package com.workspace.core.listeners;
 
-import com.day.cq.replication.ReplicationAction;
-import com.day.cq.replication.ReplicationActionType;
+package com.workspace.core.listeners;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.sling.event.jobs.JobManager;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.day.cq.replication.ReplicationAction;
+import com.day.cq.replication.ReplicationActionType;
+
 @Component(
         service = EventHandler.class,
+        immediate = true,
         property = {
-                EventConstants.EVENT_TOPIC
-                        + "="
+                EventConstants.EVENT_TOPIC + "="
                         + ReplicationAction.EVENT_TOPIC
         }
 )
-public class AssetDeactivationEventHandler
-        implements EventHandler {
+public class AssetDeactivationEventHandler implements EventHandler {
 
     private static final Logger LOG =
-            LoggerFactory.getLogger(
-                    AssetDeactivationEventHandler.class
-            );
-
-    private static final String DAM_ROOT =
-            "/content/dam";
-
-    private static final String JOB_TOPIC =
-            "workspace/dam/deactivation/notification";
+            LoggerFactory.getLogger(AssetDeactivationEventHandler.class);
 
     @Reference
     private JobManager jobManager;
@@ -45,164 +35,52 @@ public class AssetDeactivationEventHandler
     @Override
     public void handleEvent(Event event) {
 
-        LOG.info(
-                "Replication event received. topic=[{}]",
-                event.getTopic()
-        );
+        LOG.info("Replication event received. topic={}", event.getTopic());
 
-        try {
+        ReplicationAction action =
+                ReplicationAction.fromEvent(event);
 
-            ReplicationAction action =
-                    ReplicationAction.fromEvent(event);
-
-            if (action == null) {
-
-                LOG.warn(
-                        "Unable to convert OSGi event into ReplicationAction."
-                );
-
-                return;
-            }
-
-            String path = action.getPath();
-
-            String actionType =
-                    action.getType() != null
-                            ? action.getType().getName()
-                            : null;
-
-            String userId =
-                    action.getUserId();
-
-            long eventTime =
-                    action.getTime();
-
-            LOG.info(
-                    "Replication action received. "
-                            + "action=[{}], path=[{}], userId=[{}], time=[{}]",
-                    actionType,
-                    path,
-                    userId,
-                    eventTime
-            );
-
-            /*
-             * Only DEACTIVATE is required.
-             */
-            if (action.getType()
-                    != ReplicationActionType.DEACTIVATE) {
-
-                LOG.debug(
-                        "Ignoring replication action because it is "
-                                + "not DEACTIVATE. action=[{}], path=[{}]",
-                        actionType,
-                        path
-                );
-
-                return;
-            }
-
-            /*
-             * Only DAM paths are required.
-             */
-            if (path == null
-                    || !path.startsWith(DAM_ROOT + "/")) {
-
-                LOG.debug(
-                        "Ignoring non-DAM deactivation. path=[{}]",
-                        path
-                );
-
-                return;
-            }
-
-            /*
-             * Generate stable event ID.
-             */
-            String eventId =
-                    buildEventId(
-                            action,
-                            path
-                    );
-
-            LOG.info(
-                    "Valid DAM deactivation detected. "
-                            + "eventId=[{}], assetPath=[{}]",
-                    eventId,
-                    path
-            );
-
-            Map<String, Object> properties =
-                    new HashMap<>();
-
-            properties.put(
-                    "eventId",
-                    eventId
-            );
-
-            properties.put(
-                    "assetPath",
-                    path
-            );
-
-            properties.put(
-                    "userId",
-                    userId
-            );
-
-            properties.put(
-                    "deactivationTime",
-                    eventTime
-            );
-
-            /*
-             * Create asynchronous Sling Job.
-             */
-            org.apache.sling.event.jobs.Job job =
-                    jobManager.addJob(
-                            JOB_TOPIC,
-                            properties
-                    );
-
-            if (job == null) {
-
-                LOG.error(
-                        "Unable to create notification job. "
-                                + "eventId=[{}], assetPath=[{}]",
-                        eventId,
-                        path
-                );
-
-                return;
-            }
-
-            LOG.info(
-                    "Deactivation notification job created successfully. "
-                            + "jobId=[{}], eventId=[{}], assetPath=[{}]",
-                    job.getId(),
-                    eventId,
-                    path
-            );
-
-        } catch (Exception e) {
-
-            LOG.error(
-                    "Error while processing DAM deactivation event.",
-                    e
-            );
+        if (action == null) {
+            LOG.warn("Replication action is null");
+            return;
         }
-    }
 
-    private String buildEventId(
-            ReplicationAction action,
-            String path) {
+        String path = action.getPath();
+        String userId = action.getUserId();
 
-        return action.getType().getName()
-                + "-"
-                + path
-                + "-"
-                + action.getTime()
-                + "-"
-                + String.valueOf(action.getUserId());
+        LOG.info("Replication action. type={}, path={}, user={}",
+                action.getType(), path, userId);
+
+        if (action.getType() != ReplicationActionType.DEACTIVATE) {
+            LOG.debug("Ignoring replication action: {}", action.getType());
+            return;
+        }
+
+        if (path == null || !path.startsWith("/content/dam/")) {
+            LOG.debug("Ignoring non-DAM path: {}", path);
+            return;
+        }
+
+        LOG.info("Valid DAM deactivation detected. path={}, user={}",
+                path, userId);
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("assetPath", path);
+        properties.put("userId", userId);
+
+        org.apache.sling.event.jobs.Job job =
+                jobManager.addJob(
+                        "workspace/dam/deactivation/notification",
+                        properties);
+
+        if (job != null) {
+            LOG.info(
+                    "Deactivation notification job created successfully. path={}, jobId={}",
+                    path, job.getId());
+        } else {
+            LOG.error(
+                    "Failed to create deactivation notification job. path={}",
+                    path);
+        }
     }
 }
