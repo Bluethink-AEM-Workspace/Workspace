@@ -1,0 +1,8 @@
+{
+  "scripts": [
+    "create path (sling:Folder) /var/workspace",
+    "create path (nt:unstructured) /var/workspace/expiry-notifications",
+    "create service user workspace-asset-expiry-service with forced path system/cq:services/workspace",
+    "set ACL for workspace-asset-expiry-service\n  allow jcr:read on /content/dam\n  allow jcr:read on /home/groups\n  allow jcr:read on /home/users\n  allow jcr:read on /var/workspace\n  allow jcr:addChildNodes,jcr:modifyProperties,jcr:removeNode,jcr:removeChildNodes,jcr:nodeTypeManagement on /var/workspace/expiry-notifications\nend"
+  ]
+}
