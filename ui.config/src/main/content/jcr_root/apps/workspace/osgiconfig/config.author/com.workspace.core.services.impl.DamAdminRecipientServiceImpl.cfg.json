@@ -1,3 +1,7 @@
 {
-    "adminEmail": "inn84990@gmail.com"
+  "adminGroupName": "dam-administrators",
+  "emailTemplatePath": "/apps/workspace/mail-templates/deactivation-email.html",
+  "adminEmail": [
+    "your-admin-email@company.com"
+  ]
 }

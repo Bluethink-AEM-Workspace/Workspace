@@ -16,12 +16,9 @@ import com.workspace.core.services.DamAdminRecipientService;
 import com.workspace.core.services.DeactivationEmailService;
 
 @Component(service = DeactivationEmailService.class)
-public class DeactivationEmailServiceImpl
-        implements DeactivationEmailService {
+public class DeactivationEmailServiceImpl implements DeactivationEmailService {
 
-    private static final Logger LOG =
-            LoggerFactory.getLogger(
-                    DeactivationEmailServiceImpl.class);
+    private static final Logger LOG =LoggerFactory.getLogger(DeactivationEmailServiceImpl.class);
 
     @Reference
     private DamAdminRecipientService recipientService;
@@ -32,28 +29,22 @@ public class DeactivationEmailServiceImpl
     @Override
 public void sendEmail(String assetPath, String userId) {
 
-    LOG.info(
-            "Preparing deactivation email. path={}, user={}",
-            assetPath, userId);
+    LOG.info("Preparing deactivation email. path={}, user={}", assetPath, userId);
 
-    List<String> recipients =
-            recipientService.getRecipients();
+    List<String> recipients =recipientService.getRecipients();
 
     LOG.info("Notification recipients: {}", recipients);
 
     if (recipients == null || recipients.isEmpty()) {
         LOG.error("No DAM Admin email recipients configured");
-        throw new IllegalStateException(
-                "No DAM Admin email recipients configured");
+        throw new IllegalStateException( "No DAM Admin email recipients configured");
     }
 
-    MessageGateway<SimpleEmail> gateway =
-            messageGatewayService.getGateway(SimpleEmail.class);
+    MessageGateway<SimpleEmail> gateway = messageGatewayService.getGateway(SimpleEmail.class);
 
     if (gateway == null) {
         LOG.error("SimpleEmail MessageGateway is not available");
-        throw new IllegalStateException(
-                "Mail gateway is not available");
+        throw new IllegalStateException( "Mail gateway is not available");
     }
 
     try {
@@ -75,9 +66,7 @@ public void sendEmail(String assetPath, String userId) {
 
         gateway.send(email);
 
-        LOG.info(
-                "Deactivation email sent successfully. path={}, recipients={}",
-                assetPath, recipients);
+        LOG.info( "Deactivation email sent successfully. path={}, recipients={}", assetPath, recipients);
 
     } catch (EmailException e) {
 
