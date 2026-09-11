@@ -10,9 +10,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.FileWriter;
 
-
 import org.apache.commons.mail.Email;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,343 +20,320 @@ import org.mockito.MockitoAnnotations;
 import com.day.cq.mailer.MessageGateway;
 import com.day.cq.mailer.MessageGatewayService;
 
-
 import io.wcm.testing.mock.aem.junit5.AemContextExtension;
 
 @ExtendWith(AemContextExtension.class)
 class AssetExpiryNotificationServiceTest {
 
+        @Mock
+        private MessageGatewayService messageGatewayService;
 
+        @Mock
+        private MessageGateway<Email> messageGateway;
 
-@Mock
-private MessageGatewayService messageGatewayService;
+        @Mock
+        private AssetExpiryNotificationService.Config config;
 
-@Mock
-private MessageGateway<Email> messageGateway;
+        private AssetExpiryNotificationService service;
 
-@Mock
-private AssetExpiryNotificationService.Config config;
+        private File reportFile;
 
-private AssetExpiryNotificationService service;
+        private String[] recipients;
 
-private File reportFile;
+        @BeforeEach
+        void setUp() throws Exception {
 
-private String[] recipients;
+                MockitoAnnotations.openMocks(this);
 
-@BeforeEach
-void setUp() throws Exception {
+                service = new AssetExpiryNotificationService();
 
-    MockitoAnnotations.openMocks(this);
+                /*
+                 * Inject MessageGatewayService into the service.
+                 */
+                java.lang.reflect.Field field = AssetExpiryNotificationService.class
+                                .getDeclaredField("messageGatewayService");
 
-    service = new AssetExpiryNotificationService();
+                field.setAccessible(true);
+                field.set(
+                                service,
+                                messageGatewayService);
 
-    /*
-     * Inject MessageGatewayService into the service.
-     */
-    java.lang.reflect.Field field =
-            AssetExpiryNotificationService.class
-                    .getDeclaredField("messageGatewayService");
+                /*
+                 * Configure service.
+                 */
+                when(config.environment())
+                                .thenReturn("author");
 
-    field.setAccessible(true);
-    field.set(service, messageGatewayService);
+                when(config.subjectTemplate())
+                                .thenReturn("DAM Asset Expiry Report");
 
-    /*
-     * Configure service.
-     */
-    when(config.environment())
-            .thenReturn("author");
+                service.activate(config);
 
-    when(config.authorUrl())
-            .thenReturn("http://localhost:4502");
+                /*
+                 * Create a temporary CSV report file.
+                 */
+                reportFile = File.createTempFile(
+                                "workspace-asset-expiry-report",
+                                ".csv");
 
-    when(config.subjectTemplate())
-            .thenReturn("DAM Asset Expiry Report");
+                try (FileWriter writer = new FileWriter(reportFile)) {
 
-    service.activate(config);
+                        writer.write(
+                                        "Asset Name,Asset Path,Expiration Date,Author Link\n");
 
-    /*
-     * Create a temporary CSV report file.
-     */
-    reportFile =
-            File.createTempFile(
-                    "workspace-asset-expiry-report",
-                    ".csv");
+                        writer.write(
+                                        "product.pdf," +
+                                                        "/content/dam/workspace/product.pdf," +
+                                                        "2026-09-03," +
+                                                        "http://localhost:4502/content/dam/workspace/product.pdf\n");
+                }
 
-    try (FileWriter writer =
-                 new FileWriter(reportFile)) {
+                reportFile.deleteOnExit();
 
-        writer.write(
-                "Asset Name,Asset Path,Expiration Date,Author Link\n");
+                recipients = new String[] {
+                                "admin1@workspace.com",
+                                "admin2@workspace.com"
+                };
+        }
 
-        writer.write(
-                "product.pdf," +
-                "/content/dam/workspace/product.pdf," +
-                "2026-09-03," +
-                "http://localhost:4502/content/dam/workspace/product.pdf\n");
-    }
+        @Test
+        void shouldSendExpiryReportSuccessfully()
+                        throws Exception {
 
-    reportFile.deleteOnExit();
+                when(messageGatewayService.getGateway(Email.class))
+                                .thenReturn(messageGateway);
 
-    recipients =
-            new String[] {
-                "admin1@workspace.com",
-                "admin2@workspace.com"
-            };
-}
+                boolean result = service.sendExpiryReport(
+                                reportFile,
+                                recipients,
+                                1);
 
-@Test
-void shouldSendExpiryReportSuccessfully()
-        throws Exception {
+                assertTrue(result);
 
-    when(messageGatewayService.getGateway(Email.class))
-            .thenReturn(messageGateway);
+                verify(messageGatewayService)
+                                .getGateway(Email.class);
 
-    boolean result =
-            service.sendExpiryReport(
-                    reportFile,
-                    recipients,
-                    1);
+                verify(messageGateway)
+                                .send(any(Email.class));
+        }
 
-    assertTrue(result);
+        @Test
+        void shouldReturnFalseWhenReportFileIsNull()
+                        throws Exception {
 
-    verify(messageGatewayService)
-            .getGateway(Email.class);
+                boolean result = service.sendExpiryReport(
+                                null,
+                                recipients,
+                                1);
 
-    verify(messageGateway)
-            .send(any(Email.class));
-}
-
-@Test
-void shouldReturnFalseWhenReportFileIsNull()
-        throws Exception {
-
-    boolean result =
-            service.sendExpiryReport(
-                    null,
-                    recipients,
-                    1);
-
-    assertFalse(result);
-
-    verify(
-            messageGatewayService,
-            never())
-            .getGateway(any());
-
-    verify(
-            messageGateway,
-            never())
-            .send(any(Email.class));
-}
-
-@Test
-void shouldReturnFalseWhenReportFileDoesNotExist()
-        throws Exception {
-
-    File missingFile =
-            new File(
-                    "target/non-existing-expiry-report.csv");
-
-    boolean result =
-            service.sendExpiryReport(
-                    missingFile,
-                    recipients,
-                    1);
-
-    assertFalse(result);
-
-    verify(
-            messageGatewayService,
-            never())
-            .getGateway(any());
-
-    verify(
-            messageGateway,
-            never())
-            .send(any(Email.class));
-}
-
-@Test
-void shouldReturnFalseWhenRecipientsAreNull()
-        throws Exception {
-
-    boolean result =
-            service.sendExpiryReport(
-                    reportFile,
-                    null,
-                    1);
-
-    assertFalse(result);
-
-    verify(
-            messageGatewayService,
-            never())
-            .getGateway(any());
-
-    verify(
-            messageGateway,
-            never())
-            .send(any(Email.class));
-}
-
-@Test
-void shouldReturnFalseWhenRecipientsAreEmpty()
-        throws Exception {
-
-    boolean result =
-            service.sendExpiryReport(
-                    reportFile,
-                    new String[0],
-                    1);
-
-    assertFalse(result);
-
-    verify(
-            messageGatewayService,
-            never())
-            .getGateway(any());
-
-    verify(
-            messageGateway,
-            never())
-            .send(any(Email.class));
-}
-
-@Test
-void shouldReturnFalseWhenRecipientsContainOnlyBlankValues()
-        throws Exception {
-
-    String[] invalidRecipients =
-            new String[] {
-                null,
-                "",
-                "   ",
-                "\t"
-            };
-
-    boolean result =
-            service.sendExpiryReport(
-                    reportFile,
-                    invalidRecipients,
-                    1);
-
-    assertFalse(result);
-
-    verify(
-            messageGatewayService,
-            never())
-            .getGateway(any());
-
-    verify(
-            messageGateway,
-            never())
-            .send(any(Email.class));
-}
-
-@Test
-void shouldReturnFalseWhenMessageGatewayIsUnavailable()
-        throws Exception {
-
-    when(messageGatewayService.getGateway(Email.class))
-            .thenReturn(null);
-
-    boolean result =
-            service.sendExpiryReport(
-                    reportFile,
-                    recipients,
-                    1);
-
-    assertFalse(result);
-
-    verify(messageGatewayService)
-            .getGateway(Email.class);
-
-    verify(
-            messageGateway,
-            never())
-            .send(any(Email.class));
-}
-
-@Test
-void shouldReturnFalseWhenSendingEmailFails()
-        throws Exception {
-
-    when(messageGatewayService.getGateway(Email.class))
-            .thenReturn(messageGateway);
-
-    org.mockito.Mockito.doThrow(
-            new RuntimeException(
-                    "SMTP connection failed"))
-            .when(messageGateway)
-            .send(any(Email.class));
-
-    boolean result =
-            service.sendExpiryReport(
-                    reportFile,
-                    recipients,
-                    1);
-
-    assertFalse(result);
-
-    verify(messageGatewayService)
-            .getGateway(Email.class);
-
-    verify(messageGateway)
-            .send(any(Email.class));
-}
-
-@Test
-void shouldSendReportWhenAssetCountIsZero()
-        throws Exception {
-
-    when(messageGatewayService.getGateway(Email.class))
-            .thenReturn(messageGateway);
-
-    boolean result =
-            service.sendExpiryReport(
-                    reportFile,
-                    recipients,
-                    0);
-
-    assertTrue(result);
-
-    verify(messageGatewayService)
-            .getGateway(Email.class);
-
-    verify(messageGateway)
-            .send(any(Email.class));
-}
-
-@Test
-void shouldIgnoreNullAndBlankRecipientsAndSendToValidRecipients()
-        throws Exception {
-
-    when(messageGatewayService.getGateway(Email.class))
-            .thenReturn(messageGateway);
-
-    String[] mixedRecipients =
-            new String[] {
-                null,
-                "",
-                "   ",
-                "admin1@workspace.com",
-                "  admin2@workspace.com  "
-            };
-
-    boolean result =
-            service.sendExpiryReport(
-                    reportFile,
-                    mixedRecipients,
-                    1);
-
-    assertTrue(result);
-
-    verify(messageGatewayService)
-            .getGateway(Email.class);
-
-    verify(messageGateway)
-            .send(any(Email.class));
-}
-
-
+                assertFalse(result);
+
+                verify(
+                                messageGatewayService,
+                                never())
+                                .getGateway(any());
+
+                verify(
+                                messageGateway,
+                                never())
+                                .send(any(Email.class));
+        }
+
+        @Test
+        void shouldReturnFalseWhenReportFileDoesNotExist()
+                        throws Exception {
+
+                File missingFile = new File(
+                                "target/non-existing-expiry-report.csv");
+
+                boolean result = service.sendExpiryReport(
+                                missingFile,
+                                recipients,
+                                1);
+
+                assertFalse(result);
+
+                verify(
+                                messageGatewayService,
+                                never())
+                                .getGateway(any());
+
+                verify(
+                                messageGateway,
+                                never())
+                                .send(any(Email.class));
+        }
+
+        @Test
+        void shouldReturnFalseWhenRecipientsAreNull()
+                        throws Exception {
+
+                boolean result = service.sendExpiryReport(
+                                reportFile,
+                                null,
+                                1);
+
+                assertFalse(result);
+
+                verify(
+                                messageGatewayService,
+                                never())
+                                .getGateway(any());
+
+                verify(
+                                messageGateway,
+                                never())
+                                .send(any(Email.class));
+        }
+
+        @Test
+        void shouldReturnFalseWhenRecipientsAreEmpty()
+                        throws Exception {
+
+                boolean result = service.sendExpiryReport(
+                                reportFile,
+                                new String[0],
+                                1);
+
+                assertFalse(result);
+
+                verify(
+                                messageGatewayService,
+                                never())
+                                .getGateway(any());
+
+                verify(
+                                messageGateway,
+                                never())
+                                .send(any(Email.class));
+        }
+
+        @Test
+        void shouldReturnFalseWhenRecipientsContainOnlyBlankValues()
+                        throws Exception {
+
+                String[] invalidRecipients = new String[] {
+                                null,
+                                "",
+                                "   ",
+                                "\t"
+                };
+
+                boolean result = service.sendExpiryReport(
+                                reportFile,
+                                invalidRecipients,
+                                1);
+
+                assertFalse(result);
+
+                verify(
+                                messageGatewayService,
+                                never())
+                                .getGateway(any());
+
+                verify(
+                                messageGateway,
+                                never())
+                                .send(any(Email.class));
+        }
+
+        @Test
+        void shouldReturnFalseWhenMessageGatewayIsUnavailable()
+                        throws Exception {
+
+                when(messageGatewayService.getGateway(Email.class))
+                                .thenReturn(null);
+
+                boolean result = service.sendExpiryReport(
+                                reportFile,
+                                recipients,
+                                1);
+
+                assertFalse(result);
+
+                verify(messageGatewayService)
+                                .getGateway(Email.class);
+
+                verify(
+                                messageGateway,
+                                never())
+                                .send(any(Email.class));
+        }
+
+        @Test
+        void shouldReturnFalseWhenSendingEmailFails()
+                        throws Exception {
+
+                when(messageGatewayService.getGateway(Email.class))
+                                .thenReturn(messageGateway);
+
+                org.mockito.Mockito.doThrow(
+                                new RuntimeException(
+                                                "SMTP connection failed"))
+                                .when(messageGateway)
+                                .send(any(Email.class));
+
+                boolean result = service.sendExpiryReport(
+                                reportFile,
+                                recipients,
+                                1);
+
+                assertFalse(result);
+
+                verify(messageGatewayService)
+                                .getGateway(Email.class);
+
+                verify(messageGateway)
+                                .send(any(Email.class));
+        }
+
+        @Test
+        void shouldSendReportWhenAssetCountIsZero()
+                        throws Exception {
+
+                when(messageGatewayService.getGateway(Email.class))
+                                .thenReturn(messageGateway);
+
+                boolean result = service.sendExpiryReport(
+                                reportFile,
+                                recipients,
+                                0);
+
+                assertTrue(result);
+
+                verify(messageGatewayService)
+                                .getGateway(Email.class);
+
+                verify(messageGateway)
+                                .send(any(Email.class));
+        }
+
+        @Test
+        void shouldIgnoreNullAndBlankRecipientsAndSendToValidRecipients()
+                        throws Exception {
+
+                when(messageGatewayService.getGateway(Email.class))
+                                .thenReturn(messageGateway);
+
+                String[] mixedRecipients = new String[] {
+                                null,
+                                "",
+                                "   ",
+                                "admin1@workspace.com",
+                                "  admin2@workspace.com  "
+                };
+
+                boolean result = service.sendExpiryReport(
+                                reportFile,
+                                mixedRecipients,
+                                1);
+
+                assertTrue(result);
+
+                verify(messageGatewayService)
+                                .getGateway(Email.class);
+
+                verify(messageGateway)
+                                .send(any(Email.class));
+        }
 }
