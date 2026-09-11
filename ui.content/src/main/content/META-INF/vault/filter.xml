@@ -4,4 +4,7 @@
     <filter root="/content/workspace" mode="merge"/>
     <filter root="/content/dam/workspace/asset.jpg" mode="merge"/>
     <filter root="/content/experience-fragments/workspace" mode="merge"/>
+    <filter root="/conf/global/settings/workflow/models/asset-approval-and-move" mode="merge"/>
+<filter root="/conf/global/settings/workflow/launcher/config" mode="merge"/>
+<filter root="/var/workflow/models/asset-approval-and-move" mode="merge"/>
 </workspaceFilter>
