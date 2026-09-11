@@ -7,4 +7,5 @@
     <filter root="/conf/global/settings/workflow/models/asset-approval-and-move" mode="merge"/>
 <filter root="/conf/global/settings/workflow/launcher/config" mode="merge"/>
 <filter root="/var/workflow/models/asset-approval-and-move" mode="merge"/>
+<filter root="/conf/global/settings/dam/adminui-extension/metadataschema/assetMetadata" mode="merge"/>
 </workspaceFilter>
