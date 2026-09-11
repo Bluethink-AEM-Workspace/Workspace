@@ -1,0 +1,5 @@
+{
+  "user.mapping": [
+    "workspace.core:asset-service-user=asset-service-user"
+  ]
+}

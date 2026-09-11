@@ -1,3 +1,11 @@
+
+package com.workspace.core.services;
+
+import java.util.List;
+
+public interface DamAdminRecipientService {
+
+    List<String> getRecipients();
 /*
 
 DamAdminRecipientService is responsible for resolving the email addresses of users belonging to the configured DAM Admin group in AEM. It uses the asset-expiry-service service user to access the repository, locates the configured group, iterates through its direct members, and retrieves valid profile/email values while filtering out invalid or duplicate addresses. The service is configurable through OSGi and provides the scheduler with the final list of recipients for asset expiry report notifications, with appropriate handling and logging for missing groups, invalid members, missing email properties, and repository errors.
