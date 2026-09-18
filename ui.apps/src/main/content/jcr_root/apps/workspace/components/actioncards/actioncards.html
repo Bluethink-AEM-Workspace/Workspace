@@ -1,0 +1,48 @@
+<sly data-sly-use.model="com.workspace.core.models.ActionCardsModel"
+     data-sly-use.templates="core/wcm/components/commons/v1/templates.html"
+     data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html">
+
+    <!-- Clientlib Call -->
+    <sly data-sly-call="${clientlib.css @ categories='workspace.actioncards'}"></sly>
+
+    <!-- Component Container -->
+    <div class="cmp-action-cards" data-sly-test="${model.hasContent}">
+        
+        <h2 class="cmp-action-cards__main-title" 
+            data-sly-test="${model.sectionTitle}">${model.sectionTitle}</h2>
+
+        <ul class="cmp-action-cards__grid" data-sly-test="${model.cards}">
+            <sly data-sly-list.card="${model.cards}">
+                <li class="cmp-action-card">
+                    
+                    <div class="cmp-action-card__content">
+                        <h3 class="cmp-action-card__title" 
+                            data-sly-test="${card.title}">${card.title}</h3>
+                        <p class="cmp-action-card__description" 
+                           data-sly-test="${card.description}">${card.description}</p>
+                    </div>
+
+                    <div class="cmp-action-card__ctas" data-sly-test="${card.hasCtas}">
+                        <a data-sly-test="${card.validCta1}"
+                           href="${card.link1}.html"
+                           class="cmp-action-card__cta apollo-unique-id">
+                            <span class="cmp-action-card__cta-arrow" aria-hidden="true">&rarr;</span>
+                            <span>${card.linkLabel1}</span>
+                        </a>
+
+                        <a data-sly-test="${card.validCta2}"
+                           href="${card.link2}.html"
+                           class="cmp-action-card__cta apollo-unique-id">
+                            <span class="cmp-action-card__cta-arrow" aria-hidden="true">&rarr;</span>
+                            <span>${card.linkLabel2}</span>
+                        </a>
+                    </div>
+                </li>
+            </sly>
+        </ul>
+
+    </div>
+
+    <sly data-sly-call="${templates.placeholder @ isEmpty = !model.hasContent}"></sly>
+
+</sly>
