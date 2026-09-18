@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import com.day.cq.mailer.MessageGateway;
 import com.day.cq.mailer.MessageGatewayService;
-import com.workspace.core.services.DamAdminRecipientService;
 import com.workspace.core.services.DeactivationEmailService;
+import com.workspace.core.services.RecipientService1;
 
 @Component(service = DeactivationEmailService.class)
 public class DeactivationEmailServiceImpl implements DeactivationEmailService {
@@ -21,7 +21,7 @@ public class DeactivationEmailServiceImpl implements DeactivationEmailService {
     private static final Logger LOG =LoggerFactory.getLogger(DeactivationEmailServiceImpl.class);
 
     @Reference
-    private DamAdminRecipientService recipientService;
+    private RecipientService1 recipientService;
 
     @Reference
     private MessageGatewayService messageGatewayService;

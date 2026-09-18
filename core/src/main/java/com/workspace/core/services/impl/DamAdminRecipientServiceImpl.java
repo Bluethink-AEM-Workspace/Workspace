@@ -15,11 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.workspace.core.services.DamAdminRecipientService;
+import com.workspace.core.services.RecipientService1;
 
-@Component(service = DamAdminRecipientService.class)
+@Component(service = RecipientService1.class)
 @Designate(ocd = DamAdminRecipientServiceImpl.Config.class)
 public class DamAdminRecipientServiceImpl
-        implements DamAdminRecipientService {
+        implements RecipientService1 {
 
     private static final Logger LOG =
             LoggerFactory.getLogger(DamAdminRecipientServiceImpl.class);
