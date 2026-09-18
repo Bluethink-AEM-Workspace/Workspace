@@ -1,0 +1,91 @@
+/* Container & Grid Alignment */
+.cmp-action-cards {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+    font-family: inherit;
+}
+
+.cmp-action-cards__main-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 24px;
+    color: #000;
+}
+
+/* 4-Column Responsive Grid */
+.cmp-action-cards__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Individual Card Styling */
+.cmp-action-card {
+    background-color: #f7f7f7;
+    padding: 24px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 220px;
+}
+
+.cmp-action-card__title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+    color: #1a1a1a;
+}
+
+.cmp-action-card__description {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #555555;
+    margin: 0 0 20px 0;
+}
+
+/* CTA Link Styling */
+.cmp-action-card__ctas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cmp-action-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #1a1a1a;
+    transition: opacity 0.2s ease;
+}
+
+.cmp-action-card__cta:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+.cmp-action-card__cta-arrow {
+    font-size: 14px;
+}
+
+/* Responsive Behavior for Mobile & Tablet */
+@media (max-width: 1024px) {
+    .cmp-action-cards__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .cmp-action-cards__grid {
+        grid-template-columns: 1fr;
+    }
+}
