@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="nt:unstructured"
+          jcr:title="Action Cards"
+          sling:resourceType="cq/gui/components/authoring/dialog">
+    <content
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns">
+        <items jcr:primaryType="nt:unstructured">
+            <column
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/container">
+                <items jcr:primaryType="nt:unstructured">
+                    
+                    <!-- Global Section Title (max 60 characters) -->
+                    <title
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                        fieldDescription="(max 60 characters)"
+                        fieldLabel="Title"
+                        name="./title"/>
+
+                    <!-- Cards Details Composite Multifield -->
+                    <cardsDetails
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                        composite="{Boolean}true"
+                        fieldLabel="Cards Details">
+                        <field
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
+                            name="./cardsDetails">
+                            <items jcr:primaryType="nt:unstructured">
+                                
+                                <!-- Card Title (max 60 characters) -->
+                                <title
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    fieldDescription="(max 60 characters)"
+                                    fieldLabel="Title"
+                                    name="./title"/>
+
+                                <!-- Card Description (max 160 characters) -->
+                                <description
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
+                                    fieldDescription="(max 160 characters)"
+                                    fieldLabel="Description"
+                                    name="./description"/>
+
+                                <!-- Link Label 1 (max 35 characters) -->
+                                <linkLabel1
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    fieldDescription="(max 35 characters)"
+                                    fieldLabel="Link label 1"
+                                    name="./linkLabel1"/>
+
+                                <!-- Link 1 Pathfield -->
+                                <link1
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                                    fieldLabel="Link 1"
+                                    name="./link1"
+                                    rootPath="/content"/>
+
+                                <!-- Link Label 2 (max 35 characters) -->
+                                <linkLabel2
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    fieldDescription="(max 35 characters)"
+                                    fieldLabel="Link label 2"
+                                    name="./linkLabel2"/>
+
+                                <!-- Link 2 Pathfield -->
+                                <link2
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                                    fieldLabel="Link 2"
+                                    name="./link2"
+                                    rootPath="/content"/>
+
+                            </items>
+                        </field>
+                    </cardsDetails>
+
+                </items>
+            </column>
+        </items>
+    </content>
+</jcr:root>
