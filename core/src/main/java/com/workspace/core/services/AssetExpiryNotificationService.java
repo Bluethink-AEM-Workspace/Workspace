@@ -1,11 +1,16 @@
-/*
-
-AssetExpiryNotificationService is responsible for sending the generated DAM asset expiry report to configured recipients through AEM’s Day CQ Mail Service and `MessageGateway`. It builds a multipart email with the configured subject and environment details, attaches the generated CSV report, validates the recipients and report file, and hands the email over to AEM’s mail gateway for delivery. The service also handles email configuration through OSGi and provides appropriate logging and error handling without managing the sender address directly, as the From Address is controlled by Day CQ Mail Service.
-
-*/
-
-
-
+/**
+ * AssetExpiryNotificationService is responsible for sending the generated
+ * DAM asset expiry report to configured recipients through AEM's Day CQ Mail
+ * Service and MessageGateway.
+ *
+ * It builds a multipart email with the configured subject and environment
+ * details, attaches the generated CSV report, validates the recipients and
+ * report file, and hands the email over to AEM's mail gateway for delivery.
+ *
+ * The service also handles email configuration through OSGi and provides
+ * appropriate logging and error handling without managing the sender address
+ * directly, as the From Address is controlled by Day CQ Mail Service.
+ */
 
 package com.workspace.core.services;
 
@@ -31,306 +36,247 @@ import com.day.cq.mailer.MessageGatewayService;
 @Designate(ocd = AssetExpiryNotificationService.Config.class)
 public class AssetExpiryNotificationService {
 
-    private static final Logger LOG =
-            LoggerFactory.getLogger(
-                    AssetExpiryNotificationService.class);
+        private static final Logger LOG = LoggerFactory.getLogger(
+                        AssetExpiryNotificationService.class);
 
-    @Reference
-    private MessageGatewayService messageGatewayService;
+        @Reference
+        private MessageGatewayService messageGatewayService;
 
-    private volatile String environment;
-    private volatile String authorUrl;
-    private volatile String subjectTemplate;
+        private volatile String environment;
+        private volatile String subjectTemplate;
 
-    @ObjectClassDefinition(
-            name = "Workspace Asset Expiry Email Configuration",
-            description =
-                    "Email configuration for asset expiry report notifications")
-    public @interface Config {
+        @ObjectClassDefinition(name = "Workspace Asset Expiry Email Configuration", description = "Email configuration for asset expiry report notifications")
+        public @interface Config {
 
-        @AttributeDefinition(
-                name = "Environment",
-                description =
-                        "Environment name included in the email")
-        String environment() default "author";
+                @AttributeDefinition(name = "Environment", description = "Environment name included in the email")
+                String environment() default "author";
 
-        @AttributeDefinition(
-                name = "AEM Author URL",
-                description =
-                        "Base URL used to construct authenticated asset links")
-        String authorUrl() default "http://localhost:4502";
-
-        @AttributeDefinition(
-                name = "Email Subject",
-                description =
-                        "Subject used for the asset expiry report email")
-        String subjectTemplate() default
-                "DAM Asset Expiry Report";
-    }
-
-    @Activate
-    @Modified
-    protected void activate(Config config) {
-
-        environment =
-                config.environment();
-
-        authorUrl =
-                removeTrailingSlash(
-                        config.authorUrl());
-
-        subjectTemplate =
-                config.subjectTemplate();
-
-        LOG.info(
-                "Asset expiry email configuration loaded. " +
-                "Environment: {}, Author URL: {}",
-                environment,
-                authorUrl);
-    }
-
-    /**
-     * Sends the generated CSV expiry report through
-     * AEM Day CQ Mail Service.
-     *
-     * The From Address is deliberately not configured here.
-     * It is controlled by Day CQ Mail Service.
-     *
-     * @param reportFile generated CSV report
-     * @param recipients recipient email addresses
-     * @param assetCount number of assets included in report
-     * @return true when successfully handed to MessageGateway
-     */
-    public boolean sendExpiryReport(
-            File reportFile,
-            String[] recipients,
-            int assetCount) {
-
-        if (reportFile == null
-                || !reportFile.exists()
-                || !reportFile.isFile()) {
-
-            LOG.error(
-                    "Cannot send expiry report because report file does not exist: {}",
-                    reportFile);
-
-            return false;
+                @AttributeDefinition(name = "Email Subject", description = "Subject used for the asset expiry report email")
+                String subjectTemplate() default "DAM Asset Expiry Report";
         }
 
-        if (recipients == null
-                || recipients.length == 0) {
+        @Activate
+        @Modified
+        protected void activate(Config config) {
 
-            LOG.error(
-                    "Cannot send expiry report because no recipients were configured");
+                environment = config.environment();
 
-            return false;
+                subjectTemplate = config.subjectTemplate();
+
+                LOG.info(
+                                "Asset expiry email configuration loaded. " +
+                                                "Environment: {}",
+                                environment);
         }
 
-        try {
+        /**
+         * Sends the generated CSV expiry report through
+         * AEM Day CQ Mail Service.
+         *
+         * The From Address is deliberately not configured here.
+         * It is controlled by Day CQ Mail Service.
+         *
+         * @param reportFile generated CSV report
+         * @param recipients recipient email addresses
+         * @param assetCount number of assets included in report
+         * @return true when successfully handed to MessageGateway
+         */
+        public boolean sendExpiryReport(
+                        File reportFile,
+                        String[] recipients,
+                        int assetCount) {
 
-            /*
-             * ---------------------------------------------------------
-             * STEP 1: Build the email
-             * ---------------------------------------------------------
-             *
-             * MultiPartEmail is required because the email contains
-             * a file attachment.
-             *
-             * The From Address is deliberately NOT set here.
-             * Day CQ Mail Service provides the sender address.
-             */
+                if (reportFile == null
+                                || !reportFile.exists()
+                                || !reportFile.isFile()) {
 
-            MultiPartEmail email =
-                    new MultiPartEmail();
+                        LOG.error(
+                                        "Cannot send expiry report because report file does not exist: {}",
+                                        reportFile);
 
-            int validRecipientCount = 0;
-
-            StringBuilder recipientLog =
-                    new StringBuilder();
-
-            for (String recipient : recipients) {
-
-                if (recipient != null
-                        && !recipient.trim().isEmpty()) {
-
-                    String trimmedRecipient =
-                            recipient.trim();
-
-                    email.addTo(
-                            trimmedRecipient);
-
-                    if (validRecipientCount > 0) {
-                        recipientLog.append(", ");
-                    }
-
-                    recipientLog.append(
-                            trimmedRecipient);
-
-                    validRecipientCount++;
+                        return false;
                 }
-            }
 
-            if (validRecipientCount == 0) {
+                if (recipients == null
+                                || recipients.length == 0) {
 
-                LOG.error(
-                        "No valid email recipients available for expiry report");
+                        LOG.error(
+                                        "Cannot send expiry report because no recipients were configured");
 
-                return false;
-            }
+                        return false;
+                }
 
-            email.setSubject(
-                    subjectTemplate);
+                try {
 
-            String message =
-                    buildReportMessage(
-                            assetCount);
+                        /*
+                         * ---------------------------------------------------------
+                         * STEP 1: Build the email
+                         * ---------------------------------------------------------
+                         *
+                         * MultiPartEmail is required because the email contains
+                         * a file attachment.
+                         *
+                         * The From Address is deliberately NOT set here.
+                         * Day CQ Mail Service provides the sender address.
+                         */
 
-            email.setMsg(
-                    message);
+                        MultiPartEmail email = new MultiPartEmail();
 
-            /*
-             * ---------------------------------------------------------
-             * STEP 2: Attach the generated CSV report
-             * ---------------------------------------------------------
-             */
+                        int validRecipientCount = 0;
 
-            EmailAttachment attachment =
-                    new EmailAttachment();
+                        StringBuilder recipientLog = new StringBuilder();
 
-            attachment.setPath(
-                    reportFile.getAbsolutePath());
+                        for (String recipient : recipients) {
 
-            attachment.setName(
-                    "workspace-asset-expiry-report.csv");
+                                if (recipient != null
+                                                && !recipient.trim().isEmpty()) {
 
-            attachment.setDescription(
-                    "DAM asset expiry report");
+                                        String trimmedRecipient = recipient.trim();
 
-            attachment.setDisposition(
-                    EmailAttachment.ATTACHMENT);
+                                        email.addTo(
+                                                        trimmedRecipient);
 
-            email.attach(
-                    attachment);
+                                        if (validRecipientCount > 0) {
+                                                recipientLog.append(", ");
+                                        }
 
-            LOG.info(
-                    "Expiry report email prepared successfully. " +
-                    "Recipients: {}, Asset count: {}, File: {}",
-                    recipientLog.toString(),
-                    assetCount,
-                    reportFile.getAbsolutePath());
+                                        recipientLog.append(
+                                                        trimmedRecipient);
 
-            LOG.info(
-                    "Expiry notification sender will be provided " +
-                    "by Day CQ Mail Service");
+                                        validRecipientCount++;
+                                }
+                        }
 
-            /*
-             * ---------------------------------------------------------
-             * STEP 3: Obtain AEM MessageGateway
-             * ---------------------------------------------------------
-             */
+                        if (validRecipientCount == 0) {
 
-            LOG.info(
-                    "Attempting to obtain MessageGateway for expiry report email");
+                                LOG.error(
+                                                "No valid email recipients available for expiry report");
 
-            MessageGateway<Email> messageGateway =
-                    messageGatewayService
-                            .getGateway(Email.class);
+                                return false;
+                        }
 
-            if (messageGateway == null) {
+                        email.setSubject(
+                                        subjectTemplate);
 
-                LOG.error(
-                        "No MessageGateway available for expiry report email. " +
-                        "Email was prepared but was NOT sent.");
+                        String message = buildReportMessage(
+                                        assetCount);
 
-                return false;
-            }
+                        email.setMsg(
+                                        message);
 
-            LOG.info(
-                    "MessageGateway successfully obtained. " +
-                    "Sending expiry report email now.");
+                        /*
+                         * ---------------------------------------------------------
+                         * STEP 2: Attach the generated CSV report
+                         * ---------------------------------------------------------
+                         */
 
-            /*
-             * ---------------------------------------------------------
-             * STEP 4: Send email
-             * ---------------------------------------------------------
-             */
+                        EmailAttachment attachment = new EmailAttachment();
 
-            messageGateway.send(
-                    email);
+                        attachment.setPath(
+                                        reportFile.getAbsolutePath());
 
-            /*
-             * ---------------------------------------------------------
-             * STEP 5: Confirm successful handoff
-             * ---------------------------------------------------------
-             */
+                        attachment.setName(
+                                        "workspace-asset-expiry-report.csv");
 
-            LOG.info(
-                    "Expiry report email successfully handed to " +
-                    "MessageGateway. Recipients: {}, Assets: {}",
-                    recipientLog.toString(),
-                    assetCount);
+                        attachment.setDescription(
+                                        "DAM asset expiry report");
 
-            return true;
+                        attachment.setDisposition(
+                                        EmailAttachment.ATTACHMENT);
 
-        } catch (Exception e) {
+                        email.attach(
+                                        attachment);
 
-            LOG.error(
-                    "Failed to send asset expiry report email",
-                    e);
+                        LOG.info(
+                                        "Expiry report email prepared successfully. " +
+                                                        "Recipients: {}, Asset count: {}, File: {}",
+                                        recipientLog.toString(),
+                                        assetCount,
+                                        reportFile.getAbsolutePath());
 
-            return false;
-        }
-    }
+                        LOG.info(
+                                        "Expiry notification sender will be provided " +
+                                                        "by Day CQ Mail Service");
 
-    /**
-     * Builds the email body for the CSV report.
-     *
-     * @param assetCount number of assets included in report
-     * @return email message
-     */
-    private String buildReportMessage(
-            int assetCount) {
+                        /*
+                         * ---------------------------------------------------------
+                         * STEP 3: Obtain AEM MessageGateway
+                         * ---------------------------------------------------------
+                         */
 
-        return "Hello,\n\n"
-                + "Please find attached the DAM asset expiry report.\n\n"
-                + "Environment: "
-                + environment
-                + "\n"
-                + "Assets included in report: "
-                + assetCount
-                + "\n\n"
-                + "The attached CSV contains the asset name, "
-                + "asset path, expiration date and Author link.\n\n"
-                + "Please review the report and take the necessary action.\n\n"
-                + "Regards,\n"
-                + "Workspace AEM";
-    }
+                        LOG.info(
+                                        "Attempting to obtain MessageGateway for expiry report email");
 
-    /**
-     * Removes trailing slash characters from a URL.
-     *
-     * @param value configured URL
-     * @return URL without trailing slash
-     */
-    private String removeTrailingSlash(
-            String value) {
+                        MessageGateway<Email> messageGateway = messageGatewayService
+                                        .getGateway(Email.class);
 
-        if (value == null) {
-            return "";
-        }
+                        if (messageGateway == null) {
 
-        String result =
-                value.trim();
+                                LOG.error(
+                                                "No MessageGateway available for expiry report email. " +
+                                                                "Email was prepared but was NOT sent.");
 
-        while (result.endsWith("/")) {
+                                return false;
+                        }
 
-            result =
-                    result.substring(
-                            0,
-                            result.length() - 1);
+                        LOG.info(
+                                        "MessageGateway successfully obtained. " +
+                                                        "Sending expiry report email now.");
+
+                        /*
+                         * ---------------------------------------------------------
+                         * STEP 4: Send email
+                         * ---------------------------------------------------------
+                         */
+
+                        messageGateway.send(
+                                        email);
+
+                        /*
+                         * ---------------------------------------------------------
+                         * STEP 5: Confirm successful handoff
+                         * ---------------------------------------------------------
+                         */
+
+                        LOG.info(
+                                        "Expiry report email successfully handed to " +
+                                                        "MessageGateway. Recipients: {}, Assets: {}",
+                                        recipientLog.toString(),
+                                        assetCount);
+
+                        return true;
+
+                } catch (Exception e) {
+
+                        LOG.error(
+                                        "Failed to send asset expiry report email",
+                                        e);
+
+                        return false;
+                }
         }
 
-        return result;
-    }
+        /**
+         * Builds the email body for the CSV report.
+         *
+         * @param assetCount number of assets included in report
+         * @return email message
+         */
+        private String buildReportMessage(
+                        int assetCount) {
+
+                return "Hello,\n\n"
+                                + "Please find attached the DAM asset expiry report.\n\n"
+                                + "Environment: "
+                                + environment
+                                + "\n"
+                                + "Assets included in report: "
+                                + assetCount
+                                + "\n\n"
+                                + "The attached CSV contains the asset name, "
+                                + "asset path, expiration date and Author link.\n\n"
+                                + "Please review the report and take the necessary action.\n\n"
+                                + "Regards,\n"
+                                + "Workspace AEM";
+        }
 }
-
