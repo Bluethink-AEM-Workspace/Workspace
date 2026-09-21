@@ -1,55 +1,38 @@
 <sly data-sly-use.model="com.workspace.core.models.ActionCardsModel"
-     data-sly-use.templates="core/wcm/components/commons/v1/templates.html">
+     data-sly-use.templates="core/wcm/components/commons/v1/templates.html"
+     data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html">
+
+    <!-- Clientlib Call -->
+    <sly data-sly-call="${clientlib.css @ categories='workspace.actioncards'}"></sly>
 
     <!-- Component Container -->
     <div class="cmp-action-cards" data-sly-test="${model.hasContent}">
         
-        <!-- Global Section Title (Optional: Renders only when present) -->
         <h2 class="cmp-action-cards__main-title" 
-            style="font-size: 28px; font-weight: bold; margin-bottom: 24px; color: #000;"
             data-sly-test="${model.sectionTitle}">${model.sectionTitle}</h2>
 
-        <!-- Cards Collection Grid (Fixed 4 Columns per Row) -->
-        <ul class="cmp-action-cards__grid" 
-            style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; list-style: none; padding: 0; margin: 0;"
-            data-sly-test="${model.cards}">
-            
+        <ul class="cmp-action-cards__grid" data-sly-test="${model.cards}">
             <sly data-sly-list.card="${model.cards}">
-                <li class="cmp-action-card" 
-                    style="background-color: #f7f7f7; padding: 24px; border-radius: 4px; display: flex; flex-direction: column; justify-content: space-between; min-height: 220px;">
+                <li class="cmp-action-card">
                     
-                    <!-- Card Content -->
                     <div class="cmp-action-card__content">
-                        <!-- Card Title -->
                         <h3 class="cmp-action-card__title" 
-                            style="font-size: 20px; font-weight: 600; margin: 0 0 12px 0; color: #1a1a1a;"
                             data-sly-test="${card.title}">${card.title}</h3>
-                            
-                        <!-- Card Description -->
                         <p class="cmp-action-card__description" 
-                           style="font-size: 14px; line-height: 1.5; color: #555555; margin: 0 0 20px 0;"
                            data-sly-test="${card.description}">${card.description}</p>
                     </div>
 
-                    <!-- CTAs Container -->
-                    <div class="cmp-action-card__ctas" 
-                         style="display: flex; flex-direction: column; gap: 10px;"
-                         data-sly-test="${card.hasCtas}">
-                         
-                        <!-- CTA 1 (Only renders if valid label & path exist) -->
+                    <div class="cmp-action-card__ctas" data-sly-test="${card.hasCtas}">
                         <a data-sly-test="${card.validCta1}"
                            href="${card.link1}.html"
-                           class="cmp-action-card__cta apollo-unique-id"
-                           style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: bold; text-transform: uppercase; text-decoration: none; color: #1a1a1a;">
+                           class="cmp-action-card__cta apollo-unique-id">
                             <span class="cmp-action-card__cta-arrow" aria-hidden="true">&rarr;</span>
                             <span>${card.linkLabel1}</span>
                         </a>
 
-                        <!-- CTA 2 (Only renders if valid label & path exist) -->
                         <a data-sly-test="${card.validCta2}"
                            href="${card.link2}.html"
-                           class="cmp-action-card__cta apollo-unique-id"
-                           style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: bold; text-transform: uppercase; text-decoration: none; color: #1a1a1a;">
+                           class="cmp-action-card__cta apollo-unique-id">
                             <span class="cmp-action-card__cta-arrow" aria-hidden="true">&rarr;</span>
                             <span>${card.linkLabel2}</span>
                         </a>
@@ -60,7 +43,6 @@
 
     </div>
 
-    <!-- Author Mode Empty Placeholder -->
     <sly data-sly-call="${templates.placeholder @ isEmpty = !model.hasContent}"></sly>
 
 </sly>

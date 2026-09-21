@@ -17,19 +17,13 @@ import java.util.List;
 @Model(
     adaptables = {SlingHttpServletRequest.class, Resource.class},
     adapters = {ActionCardsModel.class},
-    resourceType = ActionCardsModelImpl.RESOURCE_TYPE,
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
 )
 public class ActionCardsModelImpl implements ActionCardsModel {
 
-    protected static final String RESOURCE_TYPE = "oliverwyman/components/content/actioncards";
-    private static final String REQUIRED_PATH_PREFIX = "/content";
-
-    // Map to './title' as per _cq_dialog XML
     @ValueMapValue(name = "title")
     private String sectionTitle;
 
-    // Map to './cardsDetails' composite multifield as per XML
     @ChildResource(name = "cardsDetails")
     private List<Resource> cardResources;
 
@@ -92,7 +86,7 @@ public class ActionCardsModelImpl implements ActionCardsModel {
         }
 
         private String sanitizePath(String path) {
-            if (StringUtils.isNotBlank(path) && path.startsWith(REQUIRED_PATH_PREFIX)) {
+            if (StringUtils.isNotBlank(path) && path.startsWith("/content")) {
                 return path;
             }
             return null;
