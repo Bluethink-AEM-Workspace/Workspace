@@ -55,7 +55,7 @@ public class ActionCardsModelImpl implements ActionCardsModel {
 
     @Override
     public boolean isHasContent() {
-        return StringUtils.isNotBlank(sectionTitle) || !cards.isEmpty();
+        return !cards.isEmpty();
     }
 
     public static class ActionCardItemImpl implements ActionCardItem {
@@ -63,8 +63,10 @@ public class ActionCardsModelImpl implements ActionCardsModel {
         private final String description;
         private final String linkLabel1;
         private final String link1;
+        private final String target1;
         private final String linkLabel2;
         private final String link2;
+        private final String target2;
         private final boolean validCta1;
         private final boolean validCta2;
 
@@ -72,32 +74,54 @@ public class ActionCardsModelImpl implements ActionCardsModel {
             this.title = resource.getValueMap().get("title", String.class);
             this.description = resource.getValueMap().get("description", String.class);
             
+            // CTA 1 Setup
             String lLabel1 = resource.getValueMap().get("linkLabel1", String.class);
             String lPath1 = sanitizePath(resource.getValueMap().get("link1", String.class));
             this.validCta1 = StringUtils.isNotBlank(lLabel1) && StringUtils.isNotBlank(lPath1);
             this.linkLabel1 = this.validCta1 ? lLabel1 : null;
             this.link1 = this.validCta1 ? lPath1 : null;
+            this.target1 = isExternalLink(this.link1) ? "_blank" : "_self";
 
+            // CTA 2 Setup
             String lLabel2 = resource.getValueMap().get("linkLabel2", String.class);
             String lPath2 = sanitizePath(resource.getValueMap().get("link2", String.class));
             this.validCta2 = StringUtils.isNotBlank(lLabel2) && StringUtils.isNotBlank(lPath2);
             this.linkLabel2 = this.validCta2 ? lLabel2 : null;
             this.link2 = this.validCta2 ? lPath2 : null;
+            this.target2 = isExternalLink(this.link2) ? "_blank" : "_self";
         }
 
         private String sanitizePath(String path) {
-            if (StringUtils.isNotBlank(path) && path.startsWith("/content")) {
+            if (StringUtils.isBlank(path)) {
+                return null;
+            }
+
+            // External Links
+            if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("//")) {
                 return path;
             }
+
+            // Internal AEM Links
+            if (path.startsWith("/content")) {
+                return path.endsWith(".html") ? path : path + ".html";
+            }
+
             return null;
+        }
+
+        private boolean isExternalLink(String path) {
+            return StringUtils.isNotBlank(path) && 
+                  (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("//"));
         }
 
         @Override public String getTitle() { return title; }
         @Override public String getDescription() { return description; }
         @Override public String getLinkLabel1() { return linkLabel1; }
         @Override public String getLink1() { return link1; }
+        @Override public String getTarget1() { return target1; }
         @Override public String getLinkLabel2() { return linkLabel2; }
         @Override public String getLink2() { return link2; }
+        @Override public String getTarget2() { return target2; }
         @Override public boolean isValidCta1() { return validCta1; }
         @Override public boolean isValidCta2() { return validCta2; }
         @Override public boolean isHasCtas() { return validCta1 || validCta2; }
