@@ -1,0 +1,65 @@
+<sly data-sly-use.model="com.workspace.core.models.ActionCardsModel"
+     data-sly-use.templates="core/wcm/components/commons/v1/templates.html"
+     data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html">
+
+    <!-- Clientlib Call -->
+    <sly data-sly-call="${clientlib.css @ categories='workspace.actioncards'}"/>
+
+    <!-- 1. Component Content Container (Renders when at least 1 valid card exists) -->
+    <div class="cmp-action-cards" data-sly-test="${model.hasContent}">
+        
+        <!-- Global Section Title (Optional) -->
+        <h2 class="cmp-action-cards__main-title" 
+            data-sly-test="${model.sectionTitle}">${model.sectionTitle}</h2>
+
+        <!-- Cards Collection Grid -->
+        <ul class="cmp-action-cards__grid" data-sly-test="${model.cards}">
+            <sly data-sly-list.card="${model.cards}">
+                <li class="cmp-action-card">
+                    
+                    <!-- Card Content -->
+                    <div class="cmp-action-card__content">
+                        <h3 class="cmp-action-card__title" 
+                            data-sly-test="${card.title}">${card.title}</h3>
+                        <p class="cmp-action-card__description" 
+                           data-sly-test="${card.description}">${card.description}</p>
+                    </div>
+
+                    <!-- CTAs Container -->
+                    <div class="cmp-action-card__ctas" data-sly-test="${card.hasCtas}">
+                        <!-- CTA 1 -->
+                        <a data-sly-test="${card.validCta1}"
+                           href="${card.link1}"
+                           target="${card.target1}"
+                           rel="${card.target1 == '_blank' ? 'noopener noreferrer' : ''}"
+                           class="cmp-action-card__cta apollo-unique-id">
+                            <span class="cmp-action-card__cta-arrow" aria-hidden="true">&rarr;</span>
+                            <span>${card.linkLabel1}</span>
+                        </a>
+
+                        <!-- CTA 2 -->
+                        <a data-sly-test="${card.validCta2}"
+                           href="${card.link2}"
+                           target="${card.target2}"
+                           rel="${card.target2 == '_blank' ? 'noopener noreferrer' : ''}"
+                           class="cmp-action-card__cta apollo-unique-id">
+                            <span class="cmp-action-card__cta-arrow" aria-hidden="true">&rarr;</span>
+                            <span>${card.linkLabel2}</span>
+                        </a>
+                    </div>
+                </li>
+            </sly>
+        </ul>
+
+    </div>
+
+    <!-- 2. Author Editor Warning Banner (Only visible in Author mode when 0 cards exist) -->
+    <div data-sly-test="${wcmmode.edit && !model.hasContent}" 
+         style="padding: 12px 16px; background-color: #fff3cd; border: 1px solid #ffebaa; border-left: 5px solid #ffc107; color: #856404; font-size: 14px; border-radius: 4px; margin: 10px 0;">
+        <strong>⚠️ Action Cards Component Warning:</strong> At least 1 valid card is required for this component to display on the published page.
+    </div>
+
+    <!-- 3. Default Author Mode Placeholder -->
+    <sly data-sly-call="${templates.placeholder @ isEmpty = !model.hasContent}"></sly>
+
+</sly>
