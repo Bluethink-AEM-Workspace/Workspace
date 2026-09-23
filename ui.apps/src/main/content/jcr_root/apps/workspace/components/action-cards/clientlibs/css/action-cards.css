@@ -1,0 +1,138 @@
+.cmp-action-cards {
+  width: 100%;
+}
+
+.cmp-action-cards__title {
+  margin: 0 0 32px;
+}
+
+.cmp-action-cards__list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cmp-action-cards__item {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 520px;
+  padding: 48px 40px 40px;
+  background: #f7f3f4;
+  overflow-wrap: anywhere;
+}
+
+.cmp-action-cards__card-title {
+  margin: 0 0 24px;
+  font-size: 42px;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.cmp-action-cards__description {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+/* CTA container - links are stacked vertically */
+.cmp-action-cards__actions {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 48px;
+}
+
+/* Individual CTA links */
+.cmp-action-cards__link {
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  min-height: 48px;
+  gap: 14px;
+  padding: 8px 0;
+
+  color: #292736;
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1.2;
+
+  text-decoration: none !important;
+}
+
+/* Remove underline in every link state */
+.cmp-action-cards__link:hover,
+.cmp-action-cards__link:focus,
+.cmp-action-cards__link:active,
+.cmp-action-cards__link:visited {
+  color: #292736;
+  text-decoration: none !important;
+}
+
+/* Keyboard focus */
+.cmp-action-cards__link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+/* Arrow */
+.cmp-action-cards__arrow {
+  flex-shrink: 0;
+  font-size: 34px;
+  line-height: 1;
+}
+
+@media (max-width: 1024px) {
+  .cmp-action-cards__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cmp-action-cards__item {
+    min-height: 480px;
+    padding: 40px 32px 32px;
+  }
+
+  .cmp-action-cards__card-title {
+    font-size: 36px;
+  }
+
+  .cmp-action-cards__description {
+    font-size: 21px;
+  }
+}
+
+@media (max-width: 767px) {
+  .cmp-action-cards__list {
+    grid-template-columns: 1fr;
+  }
+
+  .cmp-action-cards__item {
+    min-height: 420px;
+    padding: 32px 24px 28px;
+  }
+
+  .cmp-action-cards__card-title {
+    font-size: 32px;
+  }
+
+  .cmp-action-cards__description {
+    font-size: 19px;
+  }
+
+  .cmp-action-cards__actions {
+    padding-top: 40px;
+  }
+
+  .cmp-action-cards__link {
+    font-size: 19px;
+  }
+}
