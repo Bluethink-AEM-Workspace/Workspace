@@ -1,0 +1,138 @@
+.cmp-otp {
+    max-width: 420px;
+    margin: 30px auto;
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: Arial, sans-serif;
+}
+
+.cmp-otp__stage--hidden {
+    display: none !important;
+}
+
+.cmp-otp__title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.cmp-otp__message {
+    display: none;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+.cmp-otp__message--error {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.cmp-otp__message--success {
+    background-color: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+.cmp-otp__field-group {
+    margin-bottom: 16px;
+}
+
+.cmp-otp__field-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #334155;
+    font-weight: 500;
+}
+
+.cmp-otp__input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 14px;
+    outline: none;
+}
+
+.cmp-otp__input:focus {
+    border-color: #2563eb;
+}
+
+.cmp-otp__captcha-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.cmp-otp__canvas {
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background-color: #f8fafc;
+    min-width: 150px;
+    height: 38px;
+}
+
+.cmp-otp__btn-icon {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.cmp-otp__input--captcha {
+    flex: 1;
+}
+
+.cmp-otp__timer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.cmp-otp__timer-text {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.cmp-otp__btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.cmp-otp__btn--primary { background-color: #2563eb; color: #ffffff; }
+.cmp-otp__btn--success { background-color: #16a34a; color: #ffffff; }
+
+.cmp-otp__btn-link {
+    background: none;
+    border: none;
+    color: #2563eb;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 13px;
+}
+
+.cmp-otp__btn-link:disabled {
+    color: #94a3b8;
+    text-decoration: none;
+    cursor: not-allowed;
+}

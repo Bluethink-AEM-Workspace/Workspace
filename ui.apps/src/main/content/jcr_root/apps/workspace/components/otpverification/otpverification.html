@@ -1,0 +1,74 @@
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"
+     data-sly-call="${clientlib.all @ categories=['granite.csrf.standalone', 'workspace.otpverification']}"/>
+
+<div id="otpContainer" 
+     class="cmp-otp" 
+     data-generate-url="${properties.generateUrl || '/bin/workspace/generate-otp'}" 
+           
+     data-expiry="${properties.expirySeconds || '60'}">
+
+    <div class="cmp-otp__card">
+        <h2 class="cmp-otp__title">User Registration</h2>
+
+        <!-- Alert / Message Display Box -->
+        <div id="otp-message" class="cmp-otp__message" style="display: none;"></div>
+
+        <!-- STAGE 1: Email Input & First CAPTCHA -->
+        <div id="otp-stage-1" class="cmp-otp__stage">
+            <div class="cmp-otp__field-group">
+                <label for="email" class="cmp-otp__label">Email Address *</label>
+                <input type="email" 
+                       id="email" 
+                       class="cmp-otp__input cmp-otp__dynamic-field" 
+                       placeholder="Enter your email" 
+                       required />
+            </div>
+
+            <div class="cmp-otp__captcha-group">
+                <canvas id="captchaCanvasStage1" width="140" height="40" class="cmp-otp__captcha-canvas"></canvas>
+                <button type="button" id="refreshCaptchaStage1" class="cmp-otp__refresh-btn" title="Refresh Captcha">↻</button>
+                <input type="text" 
+                       id="captchaInputStage1" 
+                       class="cmp-otp__input cmp-otp__captcha-input" 
+                       placeholder="Enter Captcha" 
+                       maxlength="6" 
+                       required />
+            </div>
+
+            <button type="button" id="generate-otp-btn" class="cmp-otp__btn cmp-otp__btn--primary">Send OTP</button>
+        </div>
+
+        <!-- STAGE 2: OTP Verification & Second CAPTCHA (Hidden Initially) -->
+        <div id="otp-stage-2" class="cmp-otp__stage cmp-otp__stage--hidden">
+            <div class="cmp-otp__timer-wrap">
+                <span id="otp-timer-display" class="cmp-otp__timer">Expires in 60s</span>
+            </div>
+
+            <div class="cmp-otp__field-group">
+                <label for="otpInput" class="cmp-otp__label">Enter OTP *</label>
+                <input type="text" 
+                       id="otpInput" 
+                       class="cmp-otp__input" 
+                       placeholder="6-digit OTP" 
+                       maxlength="6" 
+                       required />
+            </div>
+
+            <div class="cmp-otp__captcha-group">
+                <canvas id="captchaCanvasStage2" width="140" height="40" class="cmp-otp__captcha-canvas"></canvas>
+                <button type="button" id="refreshCaptchaStage2" class="cmp-otp__refresh-btn" title="Refresh Captcha">↻</button>
+                <input type="text" 
+                       id="captchaInputStage2" 
+                       class="cmp-otp__input cmp-otp__captcha-input" 
+                       placeholder="Enter Captcha" 
+                       maxlength="6" 
+                       required />
+            </div>
+
+            <div class="cmp-otp__action-group">
+                <button type="button" id="verify-otp-btn" class="cmp-otp__btn cmp-otp__btn--primary">Verify OTP</button>
+                <button type="button" id="resend-otp-btn" class="cmp-otp__btn cmp-otp__btn--secondary" disabled>Resend OTP</button>
+            </div>
+        </div>
+    </div>
+</div>
