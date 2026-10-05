@@ -1,0 +1,24 @@
+<sly data-sly-use.model="com.workspace.core.models.AlgoliaSearchModel">
+    <!-- 1. Algolia CDN Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/satellite-min.css"/>
+
+    <!-- 2. Clientlib Call -->
+    <sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"
+         data-sly-call="${clientlib.all @ categories='workspace.site.search'}"/>
+
+    <!-- 3. Component Container -->
+    <div class="cmp-searchs"
+         data-cmp-is="algolia-search"
+         data-app-id="${model.appId}"
+         data-search-key="${model.searchApiKey}"
+         data-index-name="${model.indexName}">
+
+        <div data-sly-test="${wcmmode.edit}" class="cq-placeholder" data-emptytext="Algolia Search Component"></div>
+
+        <div class="cmp-searchs__searchbox"></div>
+        <div class="cmp-searchs__hits"></div>
+        <div class="cmp-searchs__pagination"></div>
+    </div>
+</sly>

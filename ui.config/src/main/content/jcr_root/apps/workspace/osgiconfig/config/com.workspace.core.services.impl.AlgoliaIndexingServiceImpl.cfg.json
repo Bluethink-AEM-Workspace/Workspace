@@ -1,0 +1,6 @@
+{
+  "appId": "RCITT5UEN9",
+  "adminApiKey": "$[secret:ALGOLIA_ADMIN_KEY]",
+  "searchApiKey": "a2cf8c711a0541326f74b1a6f28c9114",
+  "indexName": "aem_pages_index"
+}
