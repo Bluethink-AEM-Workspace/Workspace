@@ -1,0 +1,31 @@
+.cmp-searchs {
+    padding: 15px;
+    background: #fff;
+}
+
+.cmp-searchs .cq-placeholder {
+    min-height: 50px;
+    background: #f4f4f4;
+    border: 1px dashed #2196f3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cmp-searchs__hit-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cmp-searchs__hit-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #0000ee;
+    text-decoration: underline;
+}
+
+.cmp-searchs__hit-path {
+    font-size: 13px;
+    color: #444;
+    margin-top: 4px;
+}
