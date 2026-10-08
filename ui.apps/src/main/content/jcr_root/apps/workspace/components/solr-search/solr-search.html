@@ -1,0 +1,37 @@
+<sly
+  data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"
+  data-sly-call="${clientlib.css @ categories='workspace.solr-search'}"
+/>
+
+<div class="cmp-solr-search" data-cmp-is="solr-search">
+  <h2 class="cmp-solr-search__title">${properties.title}</h2>
+
+  <div class="cmp-solr-search__form">
+    <label class="cmp-solr-search__label" for="solr-search-input">
+      Search
+    </label>
+
+    <div class="cmp-solr-search__controls">
+      <input
+        class="cmp-solr-search__input"
+        id="solr-search-input"
+        type="search"
+        placeholder="Search pages..."
+        autocomplete="off"
+        aria-label="Search pages"
+      />
+
+      <button class="cmp-solr-search__button" type="button">Search</button>
+    </div>
+  </div>
+
+  <div class="cmp-solr-search__status" role="status" aria-live="polite"></div>
+
+  <div class="cmp-solr-search__results">
+    <h2 class="cmp-solr-search__results-title">Search Results</h2>
+
+    <div class="cmp-solr-search__results-list"></div>
+  </div>
+</div>
+
+<sly data-sly-call="${clientlib.js @ categories='workspace.solr-search'}" />

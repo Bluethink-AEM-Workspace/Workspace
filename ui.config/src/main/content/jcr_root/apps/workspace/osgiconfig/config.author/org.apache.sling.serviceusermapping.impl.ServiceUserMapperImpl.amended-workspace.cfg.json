@@ -1,0 +1,5 @@
+{
+  "user.mapping": [
+    "workspace.core:solr-index-service=workspace-solr-index-service"
+  ]
+}

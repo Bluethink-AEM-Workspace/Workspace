@@ -1,0 +1,6 @@
+{
+  "scripts": [
+    "create service user workspace-solr-index-service with forced path system/cq:services/workspace",
+    "set ACL for workspace-solr-index-service\n  allow jcr:read on /content/workspace\nend"
+  ]
+}
