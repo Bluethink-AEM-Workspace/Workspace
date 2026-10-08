@@ -1,0 +1,129 @@
+.cmp-solr-search {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.cmp-solr-search__form {
+  margin-bottom: 32px;
+}
+
+.cmp-solr-search__label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.cmp-solr-search__controls {
+  display: flex;
+  gap: 12px;
+}
+
+.cmp-solr-search__input {
+  flex: 1;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid #b5b5b5;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.cmp-solr-search__input:focus {
+  outline: 2px solid #333;
+  outline-offset: 1px;
+}
+
+.cmp-solr-search__button {
+  min-height: 44px;
+  padding: 10px 24px;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.cmp-solr-search__button:hover {
+  opacity: 0.85;
+}
+
+.cmp-solr-search__status {
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+
+.cmp-solr-search__results-title {
+  margin: 0 0 20px;
+  font-size: 24px;
+}
+
+.cmp-solr-search__results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cmp-solr-search__result {
+  padding: 20px 24px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.cmp-solr-search__result-field {
+  margin-bottom: 16px;
+}
+
+.cmp-solr-search__result-field:last-child {
+  margin-bottom: 0;
+}
+
+.cmp-solr-search__result-label {
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cmp-solr-search__result-value {
+  font-size: 16px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.cmp-solr-search__result-title-link {
+  font-size: 20px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cmp-solr-search__result-title-link:hover {
+  text-decoration: underline;
+}
+
+.cmp-solr-search__result-title-link:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.cmp-solr-search__result-snippet {
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .cmp-solr-search__controls {
+    flex-direction: column;
+  }
+
+  .cmp-solr-search__button {
+    width: 100%;
+  }
+
+  .cmp-solr-search__result {
+    padding: 16px;
+  }
+}
