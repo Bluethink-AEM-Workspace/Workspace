@@ -1,0 +1,8 @@
+{
+  "scripts": [
+    "create service user workspace-elasticsearch-service with forced path system/workspace",
+    "set ACL on /content/workspace",
+    "allow jcr:read for workspace-elasticsearch-service",
+    "end"
+  ]
+}
