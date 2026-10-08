@@ -1,0 +1,5 @@
+{
+  "user.mapping": [
+    "workspace.core:elasticsearch-indexer=[workspace-elasticsearch-service]"
+  ]
+}

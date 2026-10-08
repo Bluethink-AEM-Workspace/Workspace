@@ -1,0 +1,101 @@
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"/>
+
+<!-- CSS -->
+<sly data-sly-call="${clientlib.css @ categories='workspace.elasticsearchsearch1'}"/>
+
+
+<section
+        class="workspace-search"
+        data-component="elasticsearch-search"
+        data-endpoint="/bin/workspace/elasticsearch/search-mvp"
+        data-page-size="${properties.resultsPerPage}"
+        data-no-results-message="${properties.noResultsMessage}">
+
+    <div class="workspace-search__container">
+
+        <div class="workspace-search__header">
+
+            <h2 class="workspace-search__title">
+                ${properties.title}
+            </h2>
+
+            <p class="workspace-search__subtitle">
+                Search indexed Workspace content using Elasticsearch.
+            </p>
+
+        </div>
+
+
+        <form
+                class="workspace-search__form"
+                data-elasticsearch-search-form
+                novalidate>
+
+            <div class="workspace-search__input-wrapper">
+
+                <span
+                        class="workspace-search__search-icon"
+                        aria-hidden="true">
+                    &#128269;
+                </span>
+
+                <input
+                        class="workspace-search__input"
+                        type="search"
+                        name="q"
+                        placeholder="${properties.searchPlaceholder}"
+                        autocomplete="off"
+                        aria-label="Search Workspace content"
+                        data-elasticsearch-search-input/>
+
+            </div>
+
+
+            <button
+                    type="submit"
+                    class="workspace-search__button"
+                    data-elasticsearch-search-button>
+
+                <span data-button-text>
+                    ${properties.buttonLabel}
+                </span>
+
+                <span
+                        class="workspace-search__spinner"
+                        data-search-spinner>
+                </span>
+
+            </button>
+
+        </form>
+
+
+        <div
+                class="workspace-search__validation"
+                data-search-validation
+                role="alert"
+                aria-live="polite">
+        </div>
+
+
+        
+
+
+        <div
+                class="workspace-search__results"
+                data-search-results>
+        </div>
+
+
+        <div
+                class="workspace-search__pagination"
+                data-search-pagination>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- JavaScript -->
+<sly data-sly-call="${clientlib.js @ categories='workspace.elasticsearchsearch1'}"/>

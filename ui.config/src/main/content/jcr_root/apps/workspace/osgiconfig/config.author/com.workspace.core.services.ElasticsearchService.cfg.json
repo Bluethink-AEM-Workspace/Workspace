@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "serverUrl": "https://localhost:9200",
+  "username": "elastic",
+  "password": "BWZYR5Xh-ok*JBzAt4*3",
+  "indexAlias": "workspace-content",
+  "indexPattern": "workspace-content-*",
+  "indexTemplateName": "workspace-content-template",
+  "numberOfShards": 1,
+  "numberOfReplicas": 0,
+  "connectTimeout": 5000,
+  "readTimeout": 10000,
+  "trustAllSsl": true
+}
